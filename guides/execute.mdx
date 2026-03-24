@@ -1,0 +1,53 @@
+---
+title: "Execute Contract"
+description: "How to use the public /execute surface correctly for both default and explicit operations."
+---
+
+# Execute Contract
+
+`POST /:api_slug/execute` is the stable public execution surface for agents.
+
+## Default-operation form
+
+If the API exposes a default operation, send raw JSON directly:
+
+```bash
+curl -X POST https://gateway.apiosk.com/neural-sync-01/execute \
+  -H "Content-Type: application/json" \
+  -H "x-payment: <proof>" \
+  -d '{
+    "query": "What does Apiosk do?",
+    "context": "Apiosk is a pay-per-call API marketplace for agents."
+  }'
+```
+
+## Explicit envelope form
+
+If you need to choose a non-default operation, use:
+
+```json
+{
+  "operation": "extract",
+  "input": {},
+  "query": {},
+  "path_params": {}
+}
+```
+
+Only include `query` and `path_params` when you actually need them.
+
+## Successful response
+
+The public response envelope includes:
+
+- `status`
+- `result`
+- `cost`
+- `latency`
+- `operation`
+- `api`
+- `upstream_status`
+
+## When to use passthrough instead
+
+If you intentionally want the provider-specific HTTP shape, use passthrough routes under `/:api_slug/*path`. For generic agent integrations, stay on `GET /metadata` plus `POST /execute`.

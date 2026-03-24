@@ -1,0 +1,39 @@
+---
+title: "Payment Options"
+description: "Public-safe overview of the supported payment paths: managed wallet, raw x402, and unpaid routes."
+---
+
+# Payment Options
+
+There are three public payment modes you can reason about safely.
+
+## 1. Dashboard-managed wallet
+
+Best when you want the easiest operational flow.
+
+- create or import an agent wallet in the dashboard
+- generate a connect string or gateway-safe credential bundle
+- let the wallet pay for gateway calls within the configured limits
+
+Use this when the operator wants a smoother repeated-call workflow.
+
+## 2. Raw x402 proof flow
+
+Best when you want direct control of the payer.
+
+- call the gateway without proof
+- receive `HTTP 402`
+- sign the payment challenge with your own payer
+- retry with `x-payment`
+
+Use this when you already have your own payment orchestration or want the most explicit proof path.
+
+## 3. Unpaid routes
+
+Some routes can be configured as free. In those cases the gateway does not require payment before forwarding the request.
+
+## Recommendation
+
+- use managed wallet mode for operator dashboards and repeated agent workflows
+- use raw x402 mode for protocol-level integrations and explicit payment control
+- use unpaid mode only when the listing or endpoint is intentionally public

@@ -1,0 +1,66 @@
+---
+title: "Terminology"
+description: "Shared definitions for the public gateway, dashboard, and payment docs."
+---
+
+# Terminology
+
+## Listing
+
+A public entry in the gateway catalog. A listing has a slug, description, pricing information, and optional agent-facing metadata.
+
+## Slug
+
+The stable public identifier used in gateway URLs, for example `neural-sync-01`.
+
+## Origin URL
+
+The upstream base URL for the provider service behind a listing.
+
+## Gateway URL
+
+The public URL clients use through Apiosk, typically `https://gateway.apiosk.com/:slug`.
+
+## Listing metadata
+
+Public agent-facing metadata such as tags, default operation, and schema hints. This is not a place for secrets or internal notes.
+
+## Endpoint docs
+
+Public request and response hints attached to a listing so agents and operators can understand how to call it.
+
+## Default operation
+
+The operation used when a client posts raw JSON to `POST /:api_slug/execute` without specifying an explicit operation name.
+
+## Passthrough route
+
+A route under `/:api_slug/*path` that preserves the provider-specific HTTP shape instead of using the normalized `/execute` contract.
+
+## Managed wallet
+
+A dashboard-driven wallet workflow for repeated paid calls. It is the easier operator flow, but the internal implementation is intentionally not documented here.
+
+## Connect string
+
+A dashboard-generated credential bundle used with managed wallet flows. Public docs describe how to use it operationally, not how it works internally.
+
+## Raw x402
+
+The explicit payment flow where the client receives `HTTP 402`, signs the payment requirement externally, and retries with `x-payment`.
+
+## Payment proof
+
+The proof attached in the `x-payment` header when retrying a paid request.
+
+## Paid route
+
+A route or operation that requires payment before the gateway forwards the request.
+
+## Free route
+
+A route or operation that does not require payment before forwarding.
+
+## Active vs inactive
+
+Public listing lifecycle states. Active listings are intended to be usable and discoverable. Inactive listings are not ready for normal public use.

@@ -1,0 +1,47 @@
+---
+title: "Listing Metadata"
+description: "How to structure public listing metadata so agents can discover and use your API without exposing private details."
+---
+
+# Listing Metadata
+
+`listing_metadata` is the public description layer for your listing.
+
+Good metadata helps agents discover and reason about your API without needing provider-specific docs first.
+
+## Good public metadata
+
+- operation names
+- default operation
+- input schema hints
+- output schema hints
+- tags
+- cost hints
+- latency hints
+
+## Good example
+
+```json
+{
+  "agent_native": true,
+  "mcp_native": true,
+  "default_operation": "query",
+  "tags": ["analysis", "rag", "agent-ready"],
+  "input_schema": {
+    "type": "object"
+  },
+  "output_schema": {
+    "type": "object"
+  }
+}
+```
+
+## Do not place these fields in listing metadata
+
+- secrets
+- internal provider credentials
+- operator notes
+- private infrastructure details
+- internal settlement assumptions
+
+Think of `listing_metadata` as a public contract supplement, not a private runbook.

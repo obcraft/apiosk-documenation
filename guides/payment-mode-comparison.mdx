@@ -1,0 +1,40 @@
+---
+title: "Payment Mode Comparison"
+description: "Side-by-side comparison of managed wallet mode, raw x402 mode, and free routes."
+---
+
+# Payment Mode Comparison
+
+| Mode | Best for | Strengths | Tradeoff |
+| --- | --- | --- | --- |
+| Managed wallet | operator workflows | easiest repeated paid-call flow | less explicit than raw x402 |
+| Raw x402 | protocol-level integrations | maximum control over payment proofs | more implementation work |
+| Free routes | public access or demos | no payment flow needed | no payment enforcement |
+
+## Managed wallet
+
+Use when:
+
+- the operator is working from the dashboard
+- repeated paid calls matter more than protocol-level control
+- you want fast setup with less payment plumbing
+
+## Raw x402
+
+Use when:
+
+- you want direct payer control
+- you need to prove the 402 -> proof -> retry loop explicitly
+- you are integrating outside the managed wallet tooling
+
+## Free routes
+
+Use when:
+
+- the endpoint is intentionally public
+- you are running a zero-friction demo route
+- payment is not part of that operation
+
+## Recommendation
+
+For most operators, start with managed wallet mode. Use raw x402 when protocol control is the primary need.

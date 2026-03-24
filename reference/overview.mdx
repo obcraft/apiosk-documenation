@@ -1,0 +1,26 @@
+---
+title: "API Reference Overview"
+description: "How the generated Mintlify API reference is structured for the Apiosk gateway."
+---
+
+# API Reference Overview
+
+The API reference in this project is generated from the sanitized OpenAPI document at `openapi/public-gateway.json`.
+
+Interactive try-it execution is intentionally disabled in the docs for now. The reference stays copyable and readable, but live request execution from the docs UI is turned off until the auth and payment experience is implemented properly for paid routes.
+
+## Reference sections
+
+- Discovery
+- Execution
+- Publishing
+- Metrics
+
+## Notes
+
+- `GET /:api_slug/metadata` is the preferred discovery surface for agents.
+- `POST /:api_slug/execute` is the preferred execution surface for agents.
+- Paid routes may return `HTTP 402` until a valid `x-payment` proof is attached.
+- The generated reference covers only the public gateway contract.
+
+If you need implementation guidance, use the guides. If you need exact schemas, parameters, and response shapes, use the generated endpoint pages in this section.

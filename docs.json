@@ -1,0 +1,141 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "palm",
+  "name": "Apiosk Gateway",
+  "description": "Public integration docs for discovering, paying for, executing, and publishing APIs through the Apiosk gateway.",
+  "colors": {
+    "primary": "#2563eb",
+    "light": "#60a5fa",
+    "dark": "#0f172a"
+  },
+  "logo": {
+    "light": "/images/logo-light.svg",
+    "dark": "/images/logo-dark.svg"
+  },
+  "favicon": "/images/favicon.svg",
+  "api": {
+    "playground": {
+      "display": "simple",
+      "proxy": false,
+      "url": "full"
+    },
+    "examples": {
+      "languages": [
+        "bash",
+        "typescript"
+      ],
+      "defaults": "required",
+      "prefill": false,
+      "autogenerate": true
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Overview",
+        "groups": [
+          {
+            "group": "Gateway",
+            "pages": [
+              "index",
+              "overview/quickstart",
+              "overview/payment-model",
+              "overview/terminology",
+              "overview/faq"
+            ]
+          },
+          {
+            "group": "Dashboard",
+            "pages": [
+              "dashboard/overview",
+              "dashboard/workflow",
+              "dashboard/publishing",
+              "dashboard/agent-wallets",
+              "dashboard/manual-payments",
+              "dashboard/payments-and-usage",
+              "dashboard/gateway-testing"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Consumers",
+            "pages": [
+              "guides/consumers",
+              "guides/execute",
+              "guides/execute-capabilities",
+              "guides/payment-options",
+              "guides/payment-mode-comparison",
+              "guides/errors-and-retries",
+              "guides/examples"
+            ]
+          },
+          {
+            "group": "Publishers",
+            "pages": [
+              "guides/publishers",
+              "guides/publisher-lifecycle",
+              "guides/listing-metadata"
+            ]
+          },
+          {
+            "group": "Boundaries",
+            "pages": [
+              "guides/boundaries"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "openapi": "openapi/public-gateway.json",
+        "groups": [
+          {
+            "group": "Reference",
+            "pages": [
+              "reference/overview"
+            ]
+          },
+          {
+            "group": "Discovery",
+            "pages": [
+              "GET /health",
+              "GET /types",
+              "GET /types/{listing_type}/v1",
+              "GET /v1/apis",
+              "GET /v1/apis/{slug}"
+            ]
+          },
+          {
+            "group": "Execution",
+            "pages": [
+              "GET /{api_slug}/metadata",
+              "POST /{api_slug}/execute"
+            ]
+          },
+          {
+            "group": "Publishing",
+            "pages": [
+              "POST /v1/apis/register",
+              "GET /v1/apis/mine",
+              "POST /v1/apis/{slug}",
+              "DELETE /v1/apis/{slug}",
+              "PUT /v1/apis/{slug}/endpoints/docs"
+            ]
+          },
+          {
+            "group": "Metrics",
+            "pages": [
+              "GET /v1/balance",
+              "GET /v1/usage",
+              "GET /v1/traffic"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

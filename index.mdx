@@ -1,0 +1,37 @@
+---
+title: "Gateway Overview"
+description: "Public integration docs for the Apiosk gateway."
+---
+
+# Apiosk Gateway
+
+The Apiosk gateway is a pay-per-call API surface for agents and applications. Consumers discover APIs, inspect machine-readable metadata, receive an `HTTP 402` payment challenge when required, attach an `x-payment` proof, and execute calls through a uniform contract.
+
+## Public routes that matter
+
+| Route | Purpose |
+| --- | --- |
+| `GET /types` | Discover listing groups. |
+| `GET /v1/apis` | Search and paginate public listings. |
+| `GET /v1/apis/:slug` | Inspect one public listing and its endpoint docs. |
+| `GET /:api_slug/metadata` | Fetch MCP-style metadata and operation hints. |
+| `POST /:api_slug/execute` | Execute through the agent-native contract. |
+| `POST /v1/apis/register` | Publish a community API listing. |
+
+## How the public flow works
+
+1. Discover an API from the catalog.
+2. Read `/:api_slug/metadata` to understand the default operation, schemas, price, and tags.
+3. Call `/:api_slug/execute`.
+4. If the route is paid, handle the `402 Payment Required` response and attach an `x-payment` proof.
+5. Receive a normalized response envelope with `result`, `cost`, `latency`, and `status`.
+
+## What these docs do not expose
+
+- settlement and payout topology
+- operator controls
+- replay and anti-abuse implementation details
+- managed wallet or session internals
+- internal forwarding behavior that is not part of the public contract
+
+Use the guides for integration patterns and the API reference for the route-level contract.

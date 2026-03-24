@@ -1,0 +1,9 @@
+{
+  "name": "apiosk-gateway-docs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "npx mint dev",
+    "check:openapi": "npx mint openapi-check openapi/public-gateway.json"
+  }
+}

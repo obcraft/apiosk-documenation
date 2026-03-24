@@ -1,0 +1,1891 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Apiosk Gateway Public API",
+    "version": "1.1.0",
+    "description": "Sanitized public API reference for the Apiosk gateway. This document covers the integration contract for discovery, metadata, execution, payments, and community API publishing without exposing internal gateway implementation details."
+  },
+  "servers": [
+    {
+      "url": "https://gateway.apiosk.com",
+      "description": "Production gateway"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Discovery",
+      "description": "Browse listing groups, APIs, and listing detail."
+    },
+    {
+      "name": "Execution",
+      "description": "Call APIs through public metadata and uniform execute routes."
+    },
+    {
+      "name": "Payments",
+      "description": "Public x402 boundary: 402 responses and payment proof header."
+    },
+    {
+      "name": "Publishing",
+      "description": "Register, inspect, update, and deactivate community APIs."
+    },
+    {
+      "name": "Metrics",
+      "description": "Public wallet and traffic summary routes."
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Discovery"
+        ],
+        "operationId": "gatewayHealth",
+        "summary": "Health",
+        "x-mint": {
+          "metadata": {
+            "title": "Gateway health",
+            "sidebarTitle": "Health"
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Gateway is healthy.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "const": "ok"
+                },
+                "example": "ok"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/types": {
+      "get": {
+        "tags": [
+          "Discovery"
+        ],
+        "operationId": "listTypes",
+        "summary": "Listing groups",
+        "x-mint": {
+          "metadata": {
+            "title": "List listing groups",
+            "sidebarTitle": "Listing groups"
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Supported public listing groups.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/types/{listing_type}/v1": {
+      "get": {
+        "tags": [
+          "Discovery"
+        ],
+        "operationId": "listByType",
+        "summary": "Listings by type",
+        "x-mint": {
+          "metadata": {
+            "title": "Browse listings by type",
+            "sidebarTitle": "By type"
+          }
+        },
+        "parameters": [
+          {
+            "name": "listing_type",
+            "in": "path",
+            "required": true,
+            "description": "Public listing type to browse.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "api",
+                "dataset",
+                "service",
+                "connector",
+                "skill",
+                "product"
+              ]
+            },
+            "example": "api"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "description": "Full-text search over name and description.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "weather"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Sort order field.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "name",
+                "price",
+                "newest"
+              ],
+              "default": "name"
+            },
+            "example": "price"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "description": "Sort direction.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "asc"
+            },
+            "example": "asc"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of records to return.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500,
+              "default": 500
+            },
+            "example": 20
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "description": "Pagination offset.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            },
+            "example": 0
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paged listings for one listing type.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeListResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/v1/apis": {
+      "get": {
+        "tags": [
+          "Discovery"
+        ],
+        "operationId": "listApis",
+        "summary": "List APIs",
+        "x-mint": {
+          "metadata": {
+            "title": "List public APIs",
+            "sidebarTitle": "List APIs"
+          }
+        },
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "description": "Full-text search over name and description.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "graph"
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "description": "Optional category filter.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "compute"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "Sort order field.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "name",
+                "price",
+                "newest"
+              ],
+              "default": "name"
+            },
+            "example": "name"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "description": "Sort direction.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "asc"
+            },
+            "example": "asc"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Maximum number of records to return.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 500,
+              "default": 500
+            },
+            "example": 25
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "description": "Pagination offset.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            },
+            "example": 0
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paged public API catalog.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/apis/{slug}": {
+      "get": {
+        "tags": [
+          "Discovery"
+        ],
+        "operationId": "getApiDetail",
+        "summary": "API detail",
+        "x-mint": {
+          "metadata": {
+            "title": "Get API listing detail",
+            "sidebarTitle": "API detail"
+          }
+        },
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "description": "Gateway API slug.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "neural-sync-01"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Public listing detail including endpoint docs.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiDetailResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Publishing"
+        ],
+        "operationId": "updateApi",
+        "summary": "Update listing",
+        "x-mint": {
+          "metadata": {
+            "title": "Update API listing",
+            "sidebarTitle": "Update listing"
+          }
+        },
+        "security": [
+          {
+            "WalletAddress": [],
+            "WalletSignature": [],
+            "WalletTimestamp": [],
+            "WalletNonce": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "description": "Gateway API slug.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "my-api"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateApiRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Publishing"
+        ],
+        "operationId": "deleteApi",
+        "summary": "Deactivate listing",
+        "x-mint": {
+          "metadata": {
+            "title": "Deactivate API listing",
+            "sidebarTitle": "Deactivate"
+          }
+        },
+        "security": [
+          {
+            "WalletAddress": [],
+            "WalletSignature": [],
+            "WalletTimestamp": [],
+            "WalletNonce": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "description": "Gateway API slug.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "my-api"
+          },
+          {
+            "name": "wallet",
+            "in": "query",
+            "required": false,
+            "description": "Owner wallet used for signed deletion.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "0xabc123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/apis/register": {
+      "post": {
+        "tags": [
+          "Publishing"
+        ],
+        "operationId": "registerApi",
+        "summary": "Register API",
+        "x-mint": {
+          "metadata": {
+            "title": "Register community API",
+            "sidebarTitle": "Register API"
+          }
+        },
+        "security": [
+          {
+            "WalletAddress": [],
+            "WalletSignature": [],
+            "WalletTimestamp": [],
+            "WalletNonce": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterApiRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Register result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterApiResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/apis/mine": {
+      "get": {
+        "tags": [
+          "Publishing"
+        ],
+        "operationId": "listMyApis",
+        "summary": "My APIs",
+        "x-mint": {
+          "metadata": {
+            "title": "List wallet-owned APIs",
+            "sidebarTitle": "My APIs"
+          }
+        },
+        "security": [
+          {
+            "WalletAddress": [],
+            "WalletSignature": [],
+            "WalletTimestamp": [],
+            "WalletNonce": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "wallet",
+            "in": "query",
+            "required": true,
+            "description": "Owner wallet.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "0xabc123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Owned listings and earnings summary.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyApisResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/v1/apis/{slug}/endpoints/docs": {
+      "put": {
+        "tags": [
+          "Publishing"
+        ],
+        "operationId": "updateEndpointDocs",
+        "summary": "Endpoint docs",
+        "x-mint": {
+          "metadata": {
+            "title": "Update endpoint docs",
+            "sidebarTitle": "Endpoint docs"
+          }
+        },
+        "security": [
+          {
+            "WalletAddress": [],
+            "WalletSignature": [],
+            "WalletTimestamp": [],
+            "WalletNonce": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "description": "Gateway API slug.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "my-api"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEndpointDocsRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Endpoint docs update result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateEndpointDocsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/v1/balance": {
+      "get": {
+        "tags": [
+          "Metrics"
+        ],
+        "operationId": "checkBalance",
+        "summary": "Wallet balance",
+        "x-mint": {
+          "metadata": {
+            "title": "Get wallet spend summary",
+            "sidebarTitle": "Balance"
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "in": "query",
+            "required": true,
+            "description": "Wallet address.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "0xabc123"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Wallet spend summary.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BalanceResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/usage": {
+      "get": {
+        "tags": [
+          "Metrics"
+        ],
+        "operationId": "usageStats",
+        "summary": "Wallet usage",
+        "x-mint": {
+          "metadata": {
+            "title": "Get wallet usage statistics",
+            "sidebarTitle": "Usage"
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "in": "query",
+            "required": true,
+            "description": "Wallet address.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "0xabc123"
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "required": false,
+            "description": "Usage period.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "today",
+                "week",
+                "month",
+                "all"
+              ],
+              "default": "all"
+            },
+            "example": "week"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Wallet usage totals grouped by API.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/traffic": {
+      "get": {
+        "tags": [
+          "Metrics"
+        ],
+        "operationId": "trafficSummary",
+        "summary": "Gateway traffic",
+        "x-mint": {
+          "metadata": {
+            "title": "Get gateway traffic summary",
+            "sidebarTitle": "Traffic"
+          }
+        },
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "description": "Lookback window in days.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 90,
+              "default": 7
+            },
+            "example": 7
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gateway traffic summary.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GatewayTrafficSummary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{api_slug}/metadata": {
+      "get": {
+        "tags": [
+          "Execution"
+        ],
+        "operationId": "getAgentMetadata",
+        "summary": "Agent metadata",
+        "x-mint": {
+          "metadata": {
+            "title": "Get agent metadata",
+            "sidebarTitle": "Metadata"
+          }
+        },
+        "parameters": [
+          {
+            "name": "api_slug",
+            "in": "path",
+            "required": true,
+            "description": "Gateway API slug.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "neural-sync-01"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Agent-native metadata for one API.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentMetadataResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/{api_slug}/execute": {
+      "post": {
+        "tags": [
+          "Execution",
+          "Payments"
+        ],
+        "operationId": "executeApi",
+        "summary": "Execute API",
+        "x-mint": {
+          "metadata": {
+            "title": "Execute API via /execute",
+            "sidebarTitle": "Execute"
+          }
+        },
+        "parameters": [
+          {
+            "name": "api_slug",
+            "in": "path",
+            "required": true,
+            "description": "Gateway API slug.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "neural-sync-01"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "Either raw JSON for the default operation or an explicit envelope with operation, input, query, and path_params.",
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ExecuteEnvelopeRequest"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                ]
+              },
+              "examples": {
+                "rawDefault": {
+                  "summary": "Raw default-operation input",
+                  "value": {
+                    "query": "What does Apiosk do?",
+                    "context": "Apiosk is a pay-per-call API marketplace for agents."
+                  }
+                },
+                "explicitEnvelope": {
+                  "summary": "Explicit operation envelope",
+                  "value": {
+                    "operation": "extract",
+                    "input": {
+                      "text": "OpenAI partnered with Microsoft to scale AI infrastructure."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Wrapped execute response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecuteResponse"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Payment required. Attach an x402 payment proof in x-payment.",
+            "headers": {
+              "X-Payment-Protocol": {
+                "schema": {
+                  "type": "string",
+                  "example": "x402"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentRequiredResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "WalletAddress": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-wallet-address",
+        "description": "Wallet address used for signed management calls."
+      },
+      "WalletSignature": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-wallet-signature",
+        "description": "Signature over the canonical Apiosk auth message."
+      },
+      "WalletTimestamp": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-wallet-timestamp",
+        "description": "Unix timestamp used in the signed auth message."
+      },
+      "WalletNonce": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-wallet-nonce",
+        "description": "Replay-protected nonce used in the signed auth message."
+      },
+      "XPayment": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-payment",
+        "description": "x402 payment proof header for paid execution requests."
+      }
+    },
+    "responses": {
+      "NotFound": {
+        "description": "Resource not found.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Missing or invalid signed wallet headers.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ApiListMeta": {
+        "type": "object",
+        "required": [
+          "total",
+          "returned",
+          "limit",
+          "offset",
+          "sort",
+          "order"
+        ],
+        "properties": {
+          "total": {
+            "type": "integer"
+          },
+          "returned": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "search": {
+            "type": "string",
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "nullable": true
+          },
+          "sort": {
+            "type": "string"
+          },
+          "order": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiInfoResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "price_usd": {
+            "type": "number"
+          },
+          "category": {
+            "type": "string"
+          },
+          "raw_category": {
+            "type": "string"
+          },
+          "implementation_type": {
+            "type": "string"
+          },
+          "model_backed": {
+            "type": "boolean"
+          },
+          "listing_type": {
+            "type": "string"
+          },
+          "docs_url": {
+            "type": "string"
+          },
+          "origin_url": {
+            "type": "string"
+          },
+          "gateway_url": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "verified": {
+            "type": "boolean"
+          },
+          "endpoint_count": {
+            "type": "integer"
+          },
+          "listing_metadata": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApiListResponse": {
+        "type": "object",
+        "required": [
+          "apis",
+          "meta"
+        ],
+        "properties": {
+          "apis": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiInfoResponse"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ApiListMeta"
+          }
+        }
+      },
+      "EndpointDocResponse": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "full_url": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "price_usd": {
+            "type": "number"
+          },
+          "payment_required": {
+            "type": "boolean"
+          },
+          "request_body": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "response_body": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "request_example": {
+            "nullable": true
+          },
+          "response_example": {
+            "nullable": true
+          },
+          "headers": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "query_params": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          }
+        }
+      },
+      "ApiDetailResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "long_description": {
+            "type": "string",
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "nullable": true
+          },
+          "listing_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "docs_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "gateway_base_url": {
+            "type": "string"
+          },
+          "example_usage": {
+            "type": "string",
+            "nullable": true
+          },
+          "authentication": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "verified": {
+            "type": "boolean"
+          },
+          "listing_metadata": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endpoints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EndpointDocResponse"
+            }
+          }
+        }
+      },
+      "TypeInfo": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "endpoint": {
+            "type": "string"
+          }
+        }
+      },
+      "TypesResponse": {
+        "type": "object",
+        "properties": {
+          "gateway": {
+            "type": "string"
+          },
+          "supported_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TypeInfo"
+            }
+          },
+          "examples": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "TypeListResponse": {
+        "type": "object",
+        "properties": {
+          "listing_type": {
+            "type": "string"
+          },
+          "apis": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApiInfoResponse"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ApiListMeta"
+          }
+        }
+      },
+      "ExecuteEnvelopeRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operation": {
+            "type": "string",
+            "description": "Optional operation selector. Accepts an operation id, path, or METHOD /path key."
+          },
+          "input": {
+            "description": "JSON payload forwarded to the selected operation."
+          },
+          "query": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Optional query override for GET/HEAD or explicit query forwarding."
+          },
+          "path_params": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Optional path parameter replacements for routes containing placeholders."
+          }
+        }
+      },
+      "ExecuteResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "error"
+            ]
+          },
+          "result": {},
+          "cost": {
+            "type": "number"
+          },
+          "latency": {
+            "type": "integer"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "api": {
+            "type": "string"
+          },
+          "upstream_status": {
+            "type": "integer"
+          },
+          "error": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "PaymentRequirementExtra": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      },
+      "PaymentRequirement": {
+        "type": "object",
+        "properties": {
+          "scheme": {
+            "type": "string"
+          },
+          "network": {
+            "type": "string"
+          },
+          "maxAmountRequired": {
+            "type": "string"
+          },
+          "resource": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "mimeType": {
+            "type": "string"
+          },
+          "payTo": {
+            "type": "string"
+          },
+          "maxTimeoutSeconds": {
+            "type": "integer"
+          },
+          "asset": {
+            "type": "string"
+          },
+          "extra": {
+            "$ref": "#/components/schemas/PaymentRequirementExtra"
+          }
+        }
+      },
+      "PaymentRequiredResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "const": "Payment required"
+          },
+          "accepts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PaymentRequirement"
+            }
+          },
+          "x402Version": {
+            "type": "integer",
+            "const": 1
+          }
+        }
+      },
+      "AgentOperation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "gateway_url": {
+            "type": "string"
+          },
+          "execute_url": {
+            "type": "string"
+          },
+          "payment_required": {
+            "type": "boolean"
+          },
+          "price_usd": {
+            "type": "number"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "request_body": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "response_body": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "request_example": {
+            "nullable": true
+          },
+          "response_example": {
+            "nullable": true
+          },
+          "headers": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "query_params": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          }
+        }
+      },
+      "AgentMetadataResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string"
+          },
+          "api": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "slug": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "category": {
+                "type": "string",
+                "nullable": true
+              },
+              "listing_type": {
+                "type": "string",
+                "nullable": true
+              },
+              "gateway_base_url": {
+                "type": "string"
+              },
+              "origin_url": {
+                "type": "string"
+              },
+              "docs_url": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          },
+          "execute": {
+            "type": "object",
+            "properties": {
+              "method": {
+                "type": "string",
+                "const": "POST"
+              },
+              "path": {
+                "type": "string",
+                "const": "/execute"
+              },
+              "default_operation": {
+                "type": "string",
+                "nullable": true
+              },
+              "request_formats": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "metadata_path": {
+            "type": "string"
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentOperation"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "mcp_tool": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "input_schema": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "output_schema": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "cost_per_call": {
+            "type": "number"
+          },
+          "latency_ms": {
+            "type": "integer"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "agent_native": {
+            "type": "boolean"
+          },
+          "mcp_native": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RegisterApiRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "slug",
+          "endpoint_url",
+          "price_usd",
+          "description",
+          "owner_wallet"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "endpoint_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "price_usd": {
+            "type": "number",
+            "minimum": 0.0001,
+            "maximum": 10
+          },
+          "description": {
+            "type": "string"
+          },
+          "owner_wallet": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "default": "data"
+          },
+          "listing_metadata": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "RegisterApiResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "api_id": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "gateway_url": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "verified": {
+            "type": "boolean"
+          },
+          "health_check_passed": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateApiRequest": {
+        "type": "object",
+        "required": [
+          "owner_wallet"
+        ],
+        "properties": {
+          "owner_wallet": {
+            "type": "string"
+          },
+          "endpoint_url": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true
+          },
+          "price_usd": {
+            "type": "number",
+            "minimum": 0.0001,
+            "maximum": 10,
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "active": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "listing_metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          }
+        }
+      },
+      "UpdateApiResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "CommunityApiInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "endpoint_url": {
+            "type": "string"
+          },
+          "price_usd": {
+            "type": "number"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "verified": {
+            "type": "boolean"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "total_requests": {
+            "type": "integer"
+          },
+          "total_earned_usd": {
+            "type": "number"
+          },
+          "pending_withdrawal_usd": {
+            "type": "number"
+          }
+        }
+      },
+      "MyApisResponse": {
+        "type": "object",
+        "properties": {
+          "apis": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommunityApiInfo"
+            }
+          },
+          "total_earnings_usd": {
+            "type": "number"
+          }
+        }
+      },
+      "DeleteApiResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateEndpointDocsRequest": {
+        "type": "object",
+        "required": [
+          "owner_wallet",
+          "method",
+          "path"
+        ],
+        "properties": {
+          "owner_wallet": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "request_body": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "response_body": {
+            "type": "object",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "request_example": {
+            "nullable": true
+          },
+          "response_example": {
+            "nullable": true
+          }
+        }
+      },
+      "UpdateEndpointDocsResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "BalanceResponse": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "balance_usdc": {
+            "type": "number"
+          },
+          "spent_today_usdc": {
+            "type": "number"
+          },
+          "spent_week_usdc": {
+            "type": "number"
+          },
+          "spent_month_usdc": {
+            "type": "number"
+          }
+        }
+      },
+      "ApiUsageStats": {
+        "type": "object",
+        "properties": {
+          "requests": {
+            "type": "integer"
+          },
+          "spent_usdc": {
+            "type": "number"
+          }
+        }
+      },
+      "UsageResponse": {
+        "type": "object",
+        "properties": {
+          "total_requests": {
+            "type": "integer"
+          },
+          "total_spent_usdc": {
+            "type": "number"
+          },
+          "period": {
+            "type": "string"
+          },
+          "by_api": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ApiUsageStats"
+            }
+          }
+        }
+      },
+      "GatewayTrafficRoute": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "calls": {
+            "type": "integer"
+          },
+          "errors": {
+            "type": "integer"
+          }
+        }
+      },
+      "GatewayTrafficSummary": {
+        "type": "object",
+        "properties": {
+          "period_days": {
+            "type": "integer"
+          },
+          "total_requests": {
+            "type": "integer"
+          },
+          "error_requests": {
+            "type": "integer"
+          },
+          "unique_clients": {
+            "type": "integer"
+          },
+          "top_paths": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GatewayTrafficRoute"
+            }
+          }
+        }
+      }
+    }
+  }
+}

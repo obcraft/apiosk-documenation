@@ -1,0 +1,26 @@
+---
+title: "Gateway Testing"
+description: "How to use the dashboard's gateway section and public contract to validate that an API is charging and forwarding correctly."
+---
+
+# Gateway Testing
+
+The dashboard exposes the public gateway base URL for each API and helps operators reason about the standard paid flow.
+
+## What you validate
+
+1. the gateway URL is correct
+2. the unpaid request returns `402` for paid routes
+3. the paid retry succeeds after a valid proof is attached
+4. the response comes back from the origin through the gateway
+
+## Public-safe test model
+
+The public integration model remains:
+
+- request the gateway route
+- receive `HTTP 402` when payment is required
+- retry with `x-payment`
+- inspect the successful response
+
+This page intentionally does not document internal forwarding logic, private headers, or implementation details that are not part of the external contract.

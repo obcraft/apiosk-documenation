@@ -1,0 +1,38 @@
+---
+title: "Payment Model"
+description: "Public explanation of how paid and unpaid gateway routes work without exposing gateway internals."
+---
+
+# Payment Model
+
+The gateway uses a simple public boundary:
+
+1. The client requests a route.
+2. If the route is paid and no valid proof is attached, the gateway returns `HTTP 402`.
+3. The client retries with a valid `x-payment` proof.
+4. The gateway forwards the request and returns the upstream result.
+
+## Public payment facts
+
+- network: Base
+- asset: USDC
+- challenge transport: `HTTP 402 Payment Required`
+- proof transport: `x-payment`
+
+## Payment modes you can use
+
+### Managed wallet mode
+
+Use the dashboard to create or import an agent wallet and generate a connect string or gateway-safe credential bundle. This is the easiest option for operators who want the gateway to handle recurring paid calls within configured limits.
+
+### Raw x402 mode
+
+Use your own payer and sign the challenge yourself. This is the cleanest option when you want direct control over the payment proof flow.
+
+### Unpaid routes
+
+Some endpoints or operations may be configured as unpaid. Those routes do not require a payment proof.
+
+## What is not documented here
+
+This page does not describe settlement topology, operator controls, internal verification behavior, or managed-wallet implementation details beyond the public integration boundary.

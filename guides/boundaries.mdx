@@ -1,0 +1,31 @@
+---
+title: "Public Boundaries"
+description: "What the gateway docs include, what they exclude, and how to document the public contract safely."
+---
+
+# Public Boundaries
+
+## Included in this docs project
+
+- catalog discovery routes
+- public listing detail routes
+- MCP-style metadata
+- uniform execute contract
+- x402 payment challenge and proof boundary
+- publisher registration and listing management
+
+## Intentionally excluded
+
+- platform wallet addresses
+- payout or settlement topology
+- facilitator internals
+- anti-abuse and replay implementation details
+- managed wallet session internals
+- presence, cache controls, and operator-only routes
+- internal forwarding headers or gateway-side private routing behavior
+
+## Rule for public gateway docs
+
+Document the route shape, required headers, public request and response bodies, and examples that consumers or publishers need in order to integrate safely.
+
+Do not document anything that would reveal private infrastructure, internal operational behavior, secret material, or implementation details that are not part of the external contract.

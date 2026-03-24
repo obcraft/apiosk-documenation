@@ -1,0 +1,69 @@
+---
+title: "Publisher Guide"
+description: "How to register, inspect, update, and manage community API listings through the gateway."
+---
+
+# Publisher Guide
+
+## Signed wallet headers
+
+Management routes use signed wallet headers:
+
+- `x-wallet-address`
+- `x-wallet-signature`
+- `x-wallet-timestamp`
+- `x-wallet-nonce`
+
+The public signature message format is:
+
+```text
+Apiosk auth
+action:<action>
+wallet:<lowercase_wallet>
+resource:<resource>
+timestamp:<unix_seconds>
+nonce:<nonce>
+```
+
+## Register a listing
+
+Use `POST /v1/apis/register` to publish a community API.
+
+```json
+{
+  "name": "My API",
+  "slug": "my-api",
+  "endpoint_url": "https://example.com/api",
+  "price_usd": 0.01,
+  "description": "Public paid API",
+  "owner_wallet": "0xabc123...",
+  "category": "compute",
+  "listing_metadata": {
+    "agent_native": true,
+    "mcp_native": true
+  }
+}
+```
+
+The gateway performs a public health check against the HTTPS endpoint and saves the listing as active or inactive based on the result.
+
+## Manage your listings
+
+Use these routes after registration:
+
+- `GET /v1/apis/mine?wallet=<0x...>` to list your APIs and earnings summary
+- `POST /v1/apis/:slug` to update price, description, endpoint URL, activation state, or listing metadata
+- `DELETE /v1/apis/:slug?wallet=<0x...>` to deactivate a listing
+- `PUT /v1/apis/:slug/endpoints/docs` to attach public endpoint docs and schema hints
+
+## Listing metadata
+
+Use `listing_metadata` for agent-facing discovery fields such as:
+
+- input and output schemas
+- operation hints
+- tags
+- default operation
+- price and latency metadata
+
+Keep this metadata public-safe. Do not place secrets, private infrastructure details, or internal operational notes inside it.

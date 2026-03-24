@@ -1,0 +1,58 @@
+---
+title: "Publisher Lifecycle"
+description: "What happens to a listing from creation through activation and ongoing updates."
+---
+
+# Publisher Lifecycle
+
+## 1. Register the listing
+
+Create the listing with:
+
+- slug
+- endpoint URL
+- price
+- description
+- owner wallet
+- public listing metadata
+
+## 2. Initial validation
+
+The gateway performs a public-facing health check against the configured HTTPS endpoint.
+
+## 3. Active or inactive state
+
+The listing is then stored in a usable state for the catalog:
+
+- `active`: ready to be surfaced and used
+- `inactive`: not ready for normal public use
+
+## 4. Attach endpoint docs
+
+Add request and response hints to improve:
+
+- public detail pages
+- agent understanding
+- marketplace quality
+
+## 5. Update pricing and metadata
+
+After publishing, update:
+
+- price
+- description
+- endpoint URL
+- activation state
+- listing metadata
+
+## 6. Deactivate when needed
+
+If the listing should no longer be live, deactivate it instead of relying on stale public routes.
+
+## Good operator habit
+
+Treat the listing lifecycle as continuous maintenance:
+
+- keep endpoint docs current
+- keep listing metadata agent-usable
+- deactivate broken routes instead of leaving them publicly discoverable

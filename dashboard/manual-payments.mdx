@@ -1,0 +1,29 @@
+---
+title: "Manual Payments"
+description: "How to reason about the raw manual payment path from the dashboard context without exposing internal implementation details."
+---
+
+# Manual Payments
+
+The dashboard supports a fully explicit payment path as well.
+
+## Raw x402 flow
+
+This flow is for operators who want to prove the public protocol path directly:
+
+1. call the live gateway
+2. receive a real `402 Payment Required`
+3. sign a payment challenge from your own funded wallet
+4. retry with a valid `x-payment` proof
+5. receive the API response
+
+## When to use it
+
+- demos
+- protocol-level integrations
+- explicit payment orchestration
+- testing that does not rely on managed wallet helpers
+
+## When not to use it
+
+If your goal is smooth repeated paid calls from the operator console, the managed wallet flow is usually the better default.

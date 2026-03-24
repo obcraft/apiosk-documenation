@@ -1,0 +1,64 @@
+---
+title: "Quickstart"
+description: "Fastest path to discover an API, handle payment, and execute a request through the gateway."
+---
+
+# Quickstart
+
+## 1. Find a listing
+
+```bash
+curl "https://gateway.apiosk.com/v1/apis?search=vision&limit=5"
+```
+
+## 2. Read the metadata
+
+```bash
+curl https://gateway.apiosk.com/vision-flux-v4/metadata
+```
+
+Use this response to identify:
+
+- the default operation
+- input and output shape
+- price and latency hints
+- tags and MCP-style tool metadata
+
+## 3. Execute the API
+
+Default-operation APIs accept raw JSON:
+
+```bash
+curl -X POST https://gateway.apiosk.com/vision-flux-v4/execute \
+  -H "Content-Type: application/json" \
+  -H "x-payment: <proof>" \
+  -d '{
+    "image_url": "https://example.com/photo.jpg",
+    "prompt": "Detect the main objects in this image"
+  }'
+```
+
+## 4. Handle the 402 challenge
+
+If payment is required and no valid proof is attached, the gateway returns `HTTP 402 Payment Required`.
+
+At that point you can either:
+
+- attach a raw `x-payment` proof from your own payer flow
+- use a dashboard-managed wallet or connect string flow
+
+## 5. Read the normalized result
+
+The public agent contract returns a wrapped response:
+
+```json
+{
+  "status": "success",
+  "result": {},
+  "cost": 0.018,
+  "latency": 1800,
+  "operation": "detect",
+  "api": "vision-flux-v4",
+  "upstream_status": 200
+}
+```

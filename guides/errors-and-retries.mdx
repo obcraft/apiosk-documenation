@@ -1,0 +1,84 @@
+---
+title: "Errors And Retries"
+description: "How clients should interpret common public gateway errors and what retry behavior is appropriate."
+---
+
+# Errors And Retries
+
+## 400 Bad Request
+
+The request shape is invalid.
+
+Typical causes:
+
+- malformed JSON
+- invalid query parameters
+- missing required fields
+- unsupported execute envelope shape
+
+What to do:
+
+- fix the request
+- do not blindly retry
+
+## 401 Unauthorized
+
+Most relevant for wallet-signed management routes.
+
+Typical causes:
+
+- missing wallet auth headers
+- invalid signature
+- mismatched wallet and resource
+- expired or invalid auth context
+
+What to do:
+
+- regenerate the signed request
+- verify the wallet and signed message inputs
+
+## 402 Payment Required
+
+The route is paid and the request does not contain a valid payment proof.
+
+What to do:
+
+- read the payment requirement
+- generate a valid proof or use a managed wallet flow
+- retry the same request with `x-payment`
+
+## 404 Not Found
+
+The slug, route, or referenced resource does not exist.
+
+What to do:
+
+- verify the slug and path
+- verify the listing is active and published
+
+## 409 Conflict
+
+Most common during publishing when a slug already exists.
+
+What to do:
+
+- choose a new slug or update the existing listing instead
+
+## 5xx Errors
+
+The gateway or upstream provider had a transient failure.
+
+What to do:
+
+- retry with backoff for idempotent reads
+- avoid aggressive blind retries for mutating operations
+- surface the upstream status and body to operators where possible
+
+## Retry guidance
+
+Safe default retry posture:
+
+- `400` and `401`: no automatic retry until fixed
+- `402`: retry only after a valid payment proof is attached
+- `404` and `409`: no automatic retry without changing the request
+- `5xx`: retry with bounded backoff if the operation is safe to replay

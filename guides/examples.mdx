@@ -1,0 +1,89 @@
+---
+title: "Examples"
+description: "Minimal copy-paste examples for discovery, metadata, execute, and publisher management."
+---
+
+# Examples
+
+## Catalog discovery
+
+```bash
+curl "https://gateway.apiosk.com/v1/apis?search=graph&limit=5"
+```
+
+## Metadata fetch
+
+```bash
+curl https://gateway.apiosk.com/neural-sync-01/metadata
+```
+
+## Execute with raw default input
+
+```bash
+curl -X POST https://gateway.apiosk.com/neural-sync-01/execute \
+  -H "Content-Type: application/json" \
+  -H "x-payment: <proof>" \
+  -d '{
+    "query": "What does Apiosk do?",
+    "context": "Apiosk is a pay-per-call API marketplace for agents."
+  }'
+```
+
+## Execute with explicit operation envelope
+
+```bash
+curl -X POST https://gateway.apiosk.com/graph-nexus-api/execute \
+  -H "Content-Type: application/json" \
+  -H "x-payment: <proof>" \
+  -d '{
+    "operation": "extract",
+    "input": {
+      "text": "OpenAI partnered with Microsoft to scale AI infrastructure."
+    }
+  }'
+```
+
+## Register a listing
+
+```bash
+curl -X POST https://gateway.apiosk.com/v1/apis/register \
+  -H "Content-Type: application/json" \
+  -H "x-wallet-address: <wallet>" \
+  -H "x-wallet-signature: <signature>" \
+  -H "x-wallet-timestamp: <timestamp>" \
+  -H "x-wallet-nonce: <nonce>" \
+  -d '{
+    "name": "My API",
+    "slug": "my-api",
+    "endpoint_url": "https://example.com/api",
+    "price_usd": 0.01,
+    "description": "Public paid API",
+    "owner_wallet": "<wallet>",
+    "category": "compute"
+  }'
+```
+
+## Update a listing
+
+```bash
+curl -X POST https://gateway.apiosk.com/v1/apis/my-api \
+  -H "Content-Type: application/json" \
+  -H "x-wallet-address: <wallet>" \
+  -H "x-wallet-signature: <signature>" \
+  -H "x-wallet-timestamp: <timestamp>" \
+  -H "x-wallet-nonce: <nonce>" \
+  -d '{
+    "owner_wallet": "<wallet>",
+    "price_usd": 0.025,
+    "description": "Updated public description",
+    "active": true
+  }'
+```
+
+## Minimal TypeScript metadata fetch
+
+```ts
+const res = await fetch("https://gateway.apiosk.com/neural-sync-01/metadata");
+const data = await res.json();
+console.log(data);
+```

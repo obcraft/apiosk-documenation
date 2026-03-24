@@ -1,0 +1,57 @@
+---
+title: "Workflow Map"
+description: "The recommended public-safe dashboard workflow from onboarding through live payments."
+---
+
+# Workflow Map
+
+This is the simplest operator path through the dashboard.
+
+## 1. Add the API
+
+Choose one onboarding path:
+
+- Manual
+- GitHub
+- GitLab
+- OpenAPI spec import
+
+## 2. Configure core listing data
+
+Set:
+
+- name
+- slug
+- origin URL
+- payout wallet
+- listing type
+
+## 3. Configure endpoints and pricing
+
+Review the endpoints you want to expose and decide:
+
+- which endpoints are paid
+- which endpoints are free
+- default price per endpoint
+- network token for paid routes
+
+## 4. Review the gateway URL
+
+Use the dashboard gateway view to copy the public gateway base URL and reason about the paid request flow.
+
+## 5. Test the payment path
+
+Choose one of the public payment modes:
+
+- managed wallet flow
+- raw x402 proof flow
+
+## 6. Monitor payments and usage
+
+Once live, use the dashboard to inspect:
+
+- paid request volume
+- revenue
+- spend
+- payout status
+- recent activity

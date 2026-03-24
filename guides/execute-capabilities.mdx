@@ -1,0 +1,50 @@
+---
+title: "Execute Capabilities"
+description: "What /execute is best at, what it can represent safely, and when passthrough is the better choice."
+---
+
+# Execute Capabilities
+
+`POST /:api_slug/execute` is designed for stable, agent-facing action calls.
+
+## Best fit for /execute
+
+- JSON request bodies
+- JSON responses
+- clear action-style operations
+- default operation APIs
+- metadata-driven agent usage
+
+## Works well when
+
+- the API exposes a natural default action
+- the operation can be described with public schemas
+- the response can be wrapped into the standard execute envelope
+
+## Use passthrough instead when
+
+- you need the provider-specific HTTP path
+- you need the provider-specific response shape
+- the route is file-oriented, binary, or strongly transport-specific
+- you are integrating a special-case client that should not use the normalized agent contract
+
+## Default input rule
+
+If the listing has a default operation, raw JSON is acceptable at `/execute`.
+
+## Explicit envelope rule
+
+Use the envelope when you need to:
+
+- select a non-default operation
+- pass explicit query fields
+- pass explicit path parameters
+
+## Practical rule
+
+If you are building a generic agent integration, start with:
+
+- `GET /:api_slug/metadata`
+- `POST /:api_slug/execute`
+
+Only drop to passthrough if the normalized contract is not the right fit.

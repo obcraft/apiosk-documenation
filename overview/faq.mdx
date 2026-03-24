@@ -1,0 +1,42 @@
+---
+title: "FAQ"
+description: "Short answers to the most common public gateway and dashboard questions."
+---
+
+# FAQ
+
+## Do I need API keys to call the gateway?
+
+Not for the raw gateway payment flow. Paid routes use `HTTP 402` plus `x-payment` instead of a normal API key model.
+
+## When should I use managed wallet mode?
+
+Use it when you want an easier operator flow for repeated paid calls and do not want to build your own raw x402 signing loop for each request.
+
+## When should I use raw x402 mode?
+
+Use it when you want direct control over payment orchestration, are testing the public protocol path, or are integrating an external payer.
+
+## Can routes be free?
+
+Yes. A listing or endpoint can be configured so payment is not required before forwarding.
+
+## What is the best discovery surface for agents?
+
+`GET /:api_slug/metadata`
+
+## What is the best execution surface for agents?
+
+`POST /:api_slug/execute`
+
+## What does MCP-native mean here?
+
+It means the listing exposes structured agent-facing metadata such as operations, schema hints, tags, and other machine-usable fields that make discovery and use easier for agent tooling.
+
+## When should I use passthrough instead of /execute?
+
+Use passthrough only when you intentionally need the provider-specific route shape or response format.
+
+## Where should I put private implementation details?
+
+Nowhere in the public docs, listing metadata, or endpoint docs. Keep private infrastructure, secrets, and internal runbooks out of the public documentation surface.

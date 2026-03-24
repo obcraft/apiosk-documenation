@@ -1,0 +1,86 @@
+---
+title: "Consumer Guide"
+description: "How agents and applications discover APIs, inspect metadata, attach payment, and execute requests through the gateway."
+---
+
+# Consumer Guide
+
+## 1. Discover a listing
+
+Start with the public catalog.
+
+```bash
+curl "https://gateway.apiosk.com/v1/apis?search=graph&limit=5"
+```
+
+If you need category-level browsing, use `GET /types` and `GET /types/:listing_type/v1`.
+
+## 2. Read agent-native metadata
+
+The best entrypoint for agents is:
+
+```bash
+curl https://gateway.apiosk.com/neural-sync-01/metadata
+```
+
+The metadata response exposes:
+
+- operation names
+- default operation
+- input and output schema hints
+- cost and latency metadata
+- tags and other agent-facing discovery fields
+
+## 3. Execute using the uniform contract
+
+For default-operation APIs, `POST /execute` accepts raw JSON directly.
+
+```bash
+curl -X POST https://gateway.apiosk.com/neural-sync-01/execute \
+  -H "Content-Type: application/json" \
+  -H "x-payment: <x402-proof>" \
+  -d '{
+    "query": "What does Apiosk do?",
+    "context": "Apiosk is a pay-per-call API marketplace for agents."
+  }'
+```
+
+If you need to choose a non-default operation, use the explicit envelope:
+
+```bash
+curl -X POST https://gateway.apiosk.com/graph-nexus-api/execute \
+  -H "Content-Type: application/json" \
+  -H "x-payment: <x402-proof>" \
+  -d '{
+    "operation": "extract",
+    "input": {
+      "text": "OpenAI partnered with Microsoft to scale AI infrastructure."
+    }
+  }'
+```
+
+## 4. Handle payment
+
+Paid routes return `HTTP 402` with a machine-readable requirement. Your payer signs that requirement and sends the resulting proof in the `x-payment` header.
+
+The gateway does not require API keys for this flow.
+
+## 5. Read the normalized response
+
+Successful execute responses are wrapped into a consistent envelope:
+
+```json
+{
+  "status": "success",
+  "result": {
+    "answer": "Apiosk is a pay-per-call API marketplace for agents."
+  },
+  "cost": 0.015,
+  "latency": 1428,
+  "operation": "query",
+  "api": "neural-sync-01",
+  "upstream_status": 200
+}
+```
+
+Use passthrough routes only if you deliberately want provider-specific request and response shapes. For generic agent integrations, prefer `GET /metadata` plus `POST /execute`.
