@@ -13,6 +13,14 @@
     "dark": "/images/logo-dark.svg"
   },
   "favicon": "/images/favicon.svg",
+  "navbar": {
+    "links": [
+      {
+        "label": "Back to Site",
+        "href": "https://apiosk.com"
+      }
+    ]
+  },
   "api": {
     "playground": {
       "display": "simple",

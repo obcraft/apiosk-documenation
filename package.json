@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "npx mint dev",
+    "build": "node ./scripts/build-netlify.mjs",
+    "validate": "npx mint validate",
     "check:openapi": "npx mint openapi-check openapi/public-gateway.json"
   }
 }
